@@ -1,7 +1,6 @@
 'use strict';
 
 var emitter = require('contra/emitter');
-var crossvent = require('crossvent');
 var classes = require('./classes');
 
 function dragula (initialContainers, options) {
@@ -335,6 +334,7 @@ function dragula (initialContainers, options) {
       if (item.parentElement) {
         item.parentElement.removeChild(item);
       }
+      console.log('dropTarget === _source && o.copy');
       return;
     }
     var reference;
@@ -348,6 +348,7 @@ function dragula (initialContainers, options) {
       if (o.copy && item.parentElement) {
         item.parentElement.removeChild(item);
       }
+      console.log('o.copy && item.parentElement');
       return;
     }
     if (
@@ -454,10 +455,11 @@ function touchy (el, op, type, fn) {
     mousemove: 'MSPointerMove'
   };
   if (global.navigator.msPointerEnabled) {
-    crossvent[op](el, microsoft[type], fn);
+    el[op + 'EventListener'](microsoft[type], fn, false);
   }
-  crossvent[op](el, touch[type], fn);
-  crossvent[op](el, type, fn);
+
+  el[op + 'EventListener'](touch[type], fn, false);
+  el[op + 'EventListener'](type, fn, false);
 }
 
 function getOffset (el) {
