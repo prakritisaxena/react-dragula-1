@@ -29,7 +29,7 @@ function dragula (initialContainers, options) {
   if (o.invalid === void 0) { o.invalid = invalidTarget; }
   if (o.containers === void 0) { o.containers = initialContainers || []; }
   if (o.isContainer === void 0) { o.isContainer = never; }
-  if (o.copy === void 0) { o.copy = false; }
+  //if (drake.copy === void 0) { drake.copy = false; }
   if (o.revertOnSpill === void 0) { o.revertOnSpill = false; }
   if (o.removeOnSpill === void 0) { o.removeOnSpill = false; }
   if (o.direction === void 0) { o.direction = 'vertical'; }
@@ -42,7 +42,8 @@ function dragula (initialContainers, options) {
     cancel: cancel,
     remove: remove,
     destroy: destroy,
-    dragging: false
+    dragging: false,
+    copy: false
   });
 
   if (o.removeOnSpill === true) {
@@ -161,7 +162,7 @@ function dragula (initialContainers, options) {
   }
 
   function start (context) {
-    if (o.copy) {
+    if (drake.copy) {
       _copy = context.item.cloneNode(true);
       drake.emit('cloned', _copy, context.item, 'copy');
     }
@@ -203,7 +204,7 @@ function dragula (initialContainers, options) {
     var clientY = getCoord('clientY', e);
     var elementBehindCursor = getElementBehindPoint(_mirror, clientX, clientY);
     var dropTarget = findDropTarget(elementBehindCursor, clientX, clientY);
-    if (dropTarget && (o.copy === false || dropTarget !== _source)) {
+    if (dropTarget && (drake.copy === false || dropTarget !== _source)) {
       drop(item, dropTarget);
     } else if (o.removeOnSpill) {
       remove();
@@ -230,7 +231,7 @@ function dragula (initialContainers, options) {
     if (parent) {
       parent.removeChild(item);
     }
-    drake.emit(o.copy ? 'cancel' : 'remove', item, parent);
+    drake.emit(drake.copy ? 'cancel' : 'remove', item, parent);
     cleanup();
   }
 
@@ -241,11 +242,11 @@ function dragula (initialContainers, options) {
     var reverts = arguments.length > 0 ? revert : o.revertOnSpill;
     var item = _copy || _item;
     var parent = item.parentElement;
-    if (parent === _source && o.copy) {
+    if (parent === _source && drake.copy) {
       parent.removeChild(_copy);
     }
     var initial = isInitialPlacement(parent);
-    if (initial === false && o.copy === false && reverts) {
+    if (initial === false && drake.copy === false && reverts) {
       _source.insertBefore(item, _initialSibling);
     }
     if (initial || reverts) {
@@ -262,7 +263,6 @@ function dragula (initialContainers, options) {
     removeMirrorImage();
     if (item) {
       classes.rm(item, 'gu-transit');
-      item.parentElement.removeChild(item);
     }
     if (_renderTimer) {
       clearTimeout(_renderTimer);
@@ -331,25 +331,24 @@ function dragula (initialContainers, options) {
       _lastDropTarget = dropTarget;
       over();
     }
-    if (dropTarget === _source && o.copy) {
+    if (dropTarget === _source && drake.copy) {
       if (item.parentElement) {
         item.parentElement.removeChild(item);
       }
-      console.log('dropTarget === _source && o.copy');
       return;
     }
     var reference;
     var immediate = getImmediateChild(dropTarget, elementBehindCursor);
     if (immediate !== null) {
       reference = getReference(dropTarget, immediate, clientX, clientY);
-    } else if (o.revertOnSpill === true && !o.copy) {
+    } else if (o.revertOnSpill === true && !drake.copy) {
       reference = _initialSibling;
       dropTarget = _source;
     } else {
-      if (o.copy && item.parentElement) {
+      if (drake.copy && item.parentElement) {
         item.parentElement.removeChild(item);
       }
-      console.log('o.copy && item.parentElement');
+      drake.emit('remove');
       return;
     }
     if (
@@ -359,8 +358,7 @@ function dragula (initialContainers, options) {
       reference !== _currentSibling
     ) {
       _currentSibling = reference;
-      dropTarget.insertBefore(item, reference);
-      drake.emit('shadow', item, dropTarget);
+      drake.emit('shadow', item, dropTarget, reference);
     }
     function moved (type) { drake.emit(type, item, _lastDropTarget, _source); }
     function over () { if (changed) { moved('over'); } }
