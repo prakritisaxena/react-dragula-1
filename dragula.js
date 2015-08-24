@@ -319,8 +319,9 @@ function dragula (initialContainers, options) {
     var x = clientX - _offsetX;
     var y = clientY - _offsetY;
 
-    _mirror.style.left = x + 'px';
-    _mirror.style.top  = y + 'px';
+    // _mirror.style.left = x + 'px';
+    // _mirror.style.top  = y + 'px';
+    drake.emit('cloned', x, y, 'position');
 
     var item = _copy || _item;
     var elementBehindCursor = getElementBehindPoint(_mirror, clientX, clientY);
@@ -379,11 +380,11 @@ function dragula (initialContainers, options) {
     }
     var rect = _item.getBoundingClientRect();
     _mirror = _item.cloneNode(true);
-    _mirror.style.width = getRectWidth(rect) + 'px';
-    _mirror.style.height = getRectHeight(rect) + 'px';
-    classes.rm(_mirror, 'gu-transit');
-    classes.add(_mirror, 'gu-mirror');
-    o.mirrorContainer.appendChild(_mirror);
+    // _mirror.style.width = getRectWidth(rect) + 'px';
+    // _mirror.style.height = getRectHeight(rect) + 'px';
+    // classes.rm(_mirror, 'gu-transit');
+    // classes.add(_mirror, 'gu-mirror');
+    // o.mirrorContainer.appendChild(_mirror);
     touchy(documentElement, 'add', 'mousemove', drag);
     classes.add(o.mirrorContainer, 'gu-unselectable');
     drake.emit('cloned', _mirror, _item, 'mirror');
@@ -393,8 +394,9 @@ function dragula (initialContainers, options) {
     if (_mirror) {
       classes.rm(o.mirrorContainer, 'gu-unselectable');
       touchy(documentElement, 'remove', 'mousemove', drag);
-      _mirror.parentElement.removeChild(_mirror);
+      //_mirror.parentElement.removeChild(_mirror);
       _mirror = null;
+      drake.emit('cloned', null, null, 'remove');
     }
   }
 
