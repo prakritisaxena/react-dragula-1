@@ -1,6 +1,6 @@
 {
-  "name": "dragula",
-  "version": "3.0.3",
+  "name": "react-dragula",
+  "version": "0.0.0",
   "description": "Drag and drop so simple it hurts",
   "main": "dragula.js",
   "scripts": {
@@ -28,8 +28,7 @@
   },
   "homepage": "https://github.com/bevacqua/dragula",
   "dependencies": {
-    "contra": "1.9.1",
-    "crossvent": "1.5.0"
+    "contra": "1.9.1"
   },
   "devDependencies": {
     "browserify": "11.0.0",
